@@ -1,56 +1,39 @@
 import express from 'express';
 import 'express-async-errors';
-import * as tweetReposigory from '../data/tweet.js';
+import { body } from 'express-validator';
+import * as tweetController from '../controller/tweet.js';
+import { validate } from '../middleware/validator.js';
 
+//Contract Testing: Client-Server
 
 const router = express.Router();
 
+const validateTweet = [
+    body('text')
+        .trim()
+        .isLength({min: 3})
+        .withMessage('Text should be at least 3 charaters'),
+    validate
+]
+
 // GET /tweets
 // GET /tweets?username=:username
-router.get('/', (req, res, next) => {
-    const username = req.query.username;
-    const data = username
-      ? tweetReposigory.getAllByUsername(username)
-      : tweetReposigory.getAll();
-    res.status(200).json(data);
-  });
+router.get('/', tweetController.getTweets);
 
 //GET /tweets/:id
-router.get('/:id', (req, res, next) => {
-    const id = req.params.id;
-    const tweet = tweetReposigory.getById(id);
-    if(tweet){
-        res.status(200).json(tweet);
-    }else{
-        res.status(404).json({message : `Tweet id(${id}) is not found`});
-    }
-});
+router.get('/:id', tweetController.getTweet);
 
 //POST /tweets
-router.post('/', (req, res, next) => {
-    const {text, name, username} = req.body;
-    const tweet = tweetReposigory.create(text, name, username);
-    res.status(201).json(tweet);
-});
+router.post(
+    '/', 
+    validateTweet,
+    tweetController.createTweet
+    );
 
 //PUT /tweets/:id
-router.put('/:id' , (req, res, next) => {
-    const id = req.params.id;
-    const text = req.body.text;
-    const tweet = tweetReposigory.update(id, text);
-    if(tweet){
-        tweet.text = text;
-        return res.status(200).json(tweet);
-    }else{
-        return res.status(404).json({message:`Tweet id(${id}) is not found`});
-    }
-});
+router.put('/:id' , validateTweet,tweetController.updateTweet);
 
 //DELETE /tweets/:id
-router.delete('/:id', (req, res, next) => {
-    const id = req.params.id;
-    tweetReposigory.remove(id);
-    res.sendStatus(204);
-});
+router.delete('/:id', tweetController.deleteTweet);
 
 export default router;
