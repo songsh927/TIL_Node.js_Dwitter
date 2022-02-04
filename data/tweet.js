@@ -1,5 +1,3 @@
-
-
 let tweets =[
     {
         id:'1',

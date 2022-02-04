@@ -28,10 +28,10 @@ router.post(
     '/', 
     validateTweet,
     tweetController.createTweet
-    );
+);
 
 //PUT /tweets/:id
-router.put('/:id' , validateTweet,tweetController.updateTweet);
+router.put('/:id' , validateTweet, tweetController.updateTweet);
 
 //DELETE /tweets/:id
 router.delete('/:id', tweetController.deleteTweet);
