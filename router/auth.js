@@ -1,7 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import {body} from 'express-validator';
-import { validate } from '../middleware/validator';
+import { validate } from '../middleware/validator.js';
 import * as authController from '../controller/auth.js';
 
 const router = express.Router();
