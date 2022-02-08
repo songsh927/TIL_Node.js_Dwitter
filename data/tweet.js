@@ -12,6 +12,12 @@ let tweets =[
         text:'Hello world!',
         createdAt: Date().toString(),
         userId: '1',
+    },
+    {
+        id:'3',
+        text:'Hello world!',
+        createdAt: Date().toString(),
+        userId: '1',
     }
 ];
 
@@ -41,7 +47,7 @@ export async function getById(id) {
 
 export async function create(text, userId){
     const tweet = {
-        id: Date().toString(),
+        id: Date.now().toString(),
         text,
         createdAt: new Date(),
         userId,
