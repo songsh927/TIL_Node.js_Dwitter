@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import 'express-async-errors';
 import tweetRouter from './router/tweet.js';
 import authRouter from './router/auth.js'
+import { config } from './config.js';
+//import {Server} from 'socket.io';
 
 const app = express();
 
@@ -25,4 +27,16 @@ app.use((error, req, res, next) => {
     res.sendStatus(500);
 })
 
+//const server = 
 app.listen(8080);
+/*const socketIO = new Server(server,{
+    cors: {
+        origin: '*',
+    },
+});
+
+socketIO.on('connection', (socket) => {
+    console.log('client is here');
+    socketIO.emit('dwitter', 'Hello');
+    socketIO.emit('dwitter', 'Hello');
+})*/

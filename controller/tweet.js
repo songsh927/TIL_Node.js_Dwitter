@@ -29,7 +29,7 @@ export async function updateTweet(req, res){
     const text = req.body.text;
     const tweet = await tweetRepository.getById(id);
     if(!tweet){
-        return res.status(404);
+        return res.sendstatus(404);
     }
     if(tweet.userId !== req.userId){
         return res.sendStatus(403);
