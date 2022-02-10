@@ -6,6 +6,7 @@ function required(key, defaultValue = undefined){
     if(value == null){
         throw new Error(`Key ${key} is undefined`)
     }
+    return value;
 }
 
 export const config = {
