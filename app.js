@@ -6,8 +6,8 @@ import 'express-async-errors';
 import tweetRouter from './router/tweet.js';
 import authRouter from './router/auth.js'
 import { config } from './config.js';
-import {Server} from 'socket.io';
 import {initSocket} from './connection/socket.js';
+import { connectDB } from './database/database.js';
 
 const app = express();
 
@@ -28,5 +28,9 @@ app.use((error, req, res, next) => {
     res.sendStatus(500);
 })
 
-const server = app.listen(config.host.serverPort);
-initSocket(server);
+connectDB().then(db => {
+    console.log('init!', db);
+    const server = app.listen(config.host.serverPort);
+    initSocket(server);
+})
+.catch(console.error);
