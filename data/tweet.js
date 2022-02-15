@@ -1,33 +1,29 @@
 import * as userRepository from './auth.js';
+import { getTweets } from '../database/database.js';
 
-let tweets =[
+
+/*
     {
         id:'1',
         text:'트위터 ㅎㅇ',
         createdAt: new Date().toString(),
         userId: '1',
-    },
-    {
-        id:'2',
-        text:'Hello world!',
-        createdAt: Date().toString(),
-        userId: '1',
-    },
-    {
-        id:'3',
-        text:'Hello world!',
-        createdAt: Date().toString(),
-        userId: '1',
+        username: 'ellie',
+        password: password,
+        name: 'Ellie',
+        email: 'ellie@naver.com',
+        url: ''
     }
-];
-
+*/
 export async function getAll(){
-    return Promise.all(
-        tweets.map(async (tweet) => {
-            const {username, name, url} = await userRepository.findById(tweet.userId);
-            return {...tweet, username, name, url};
-        })
-    )
+    return getTweets()
+    .find()
+    .srot({createdAt: -1 })
+    .toArray()
+    .then(data => {
+        console.log(data);
+        return data;
+    });
 }
 
 export async function getAllByUsername(username){
@@ -46,14 +42,23 @@ export async function getById(id) {
 }
 
 export async function create(text, userId){
+    
+    const userData = await userRepository.findById(userId);
+    
     const tweet = {
-        id: Date.now().toString(),
         text,
         createdAt: new Date(),
         userId,
+        name: userData.name,
+        username: userData.username,
+        url: userData.url,
     };
-    tweets = [tweet, ...tweets];
-    return getById(tweet.id);
+    console.log(tweet);
+
+    return getTweets()
+    .insertOne(tweet)
+    .then((data) => mapOptionalTweet(tweet));
+
 }
 
 export async function update(id, text){
@@ -66,4 +71,8 @@ export async function update(id, text){
 
 export async function remove(id){
     tweets = tweets.filter((tweet) => tweet.id !==id);
+}
+
+function mapOptionalTweet(tweet) {
+    return tweet ? {...tweet, id: tweet._id.toString() } : tweet;
 }
