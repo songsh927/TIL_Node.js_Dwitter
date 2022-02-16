@@ -1,5 +1,7 @@
 import * as userRepository from './auth.js';
 import { getTweets } from '../database/database.js';
+import MongoDb from 'mongodb';
+//const ObjectId = MongoDb.ObjectId;
 
 
 /*
@@ -18,27 +20,24 @@ import { getTweets } from '../database/database.js';
 export async function getAll(){
     return getTweets()
     .find()
-    .srot({createdAt: -1 })
+    .sort({createdAt: -1 })
     .toArray()
-    .then(data => {
-        console.log(data);
-        return data;
-    });
+    .then(mapTweets);
 }
 
 export async function getAllByUsername(username){
-    return getAll().then((tweets) => 
-    tweets.filter((tweet) => tweet.username == username)
-    );
+    return getTweets()
+    .find({username})
+    .sort({createdAt: -1 })
+    .toArray()
+    .then(mapTweets);
 }
 
 export async function getById(id) {
-    const found = tweets.find((tweet) => tweet.id == id);
-    if(!found){
-        return null;
-    }
-    const { username, name, url } = await userRepository.findById(found.userId);
-    return {...found, username, name, url };
+    return getTweets()
+    .findOne({_id: new MongoDb.ObjectId(id)})
+    .then(mapOptionalTweet);
+
 }
 
 export async function create(text, userId){
@@ -57,22 +56,31 @@ export async function create(text, userId){
 
     return getTweets()
     .insertOne(tweet)
-    .then((data) => mapOptionalTweet(tweet));
+    .then((data) => mapOptionalTweet({...tweet, _id:data.insertedId})
+    );
 
 }
 
 export async function update(id, text){
-    const tweet = tweets.find((tweet) => tweet.id === id);
-    if(tweet){
-        tweet.text = text;
-    }
-    return getById(tweet.id);
+    return getTweets()
+    .findOneAndUpdate(
+        {_id: new MongoDb.ObjectId(id)},
+        {$set: {text}},
+        {returnDocument: 'after'}
+    )
+    .then(result => result.value)
+    .then(mapOptionalTweet);
 }
 
 export async function remove(id){
-    tweets = tweets.filter((tweet) => tweet.id !==id);
+    return getTweets()
+    .deleteOne({_id: new MongoDb.ObjectId(id) });
 }
 
 function mapOptionalTweet(tweet) {
     return tweet ? {...tweet, id: tweet._id.toString() } : tweet;
+}
+
+function mapTweets(tweets) {
+    return tweets.map(mapOptionalTweet);
 }
