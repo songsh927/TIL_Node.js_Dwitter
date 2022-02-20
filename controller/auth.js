@@ -19,6 +19,7 @@ export async function signup(req, res){
         url,
     });
     const token = createJwtToken(userId);
+    setToken(res, token);
     res.status(201).json({token, username});
 }
 
@@ -33,7 +34,13 @@ export async function login(req, res){
         return res.status(401).json({message: `Invalid user or password`});
     }
     const token = createJwtToken(user.id);
+    setToken(res, token);
     res.status(200).json({token, username});
+}
+
+export async function logout(req, res, next){
+    res.cookie('token', '');
+    res.status(200).json({message: 'User has been logged out'});
 }
 
 export async function me(req, res, next){
@@ -46,4 +53,14 @@ export async function me(req, res, next){
 
 function createJwtToken(id){
     return jwt.sign({id}, config.jwt.secretKey , {expiresIn: config.jwt.expriesInSec});
+}
+
+function setToken(res, token){
+    const options = {
+        maxAge: config.jwt.expriesInSec * 1000,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+    }
+    res.cookie('token', token, options)
 }
