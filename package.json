@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "DOTENV_CONFIG_PATH=./.env.test jest --watchAll",
     "start": "nodemon app"
   },
   "author": "",
@@ -25,5 +25,10 @@
     "nodemon": "^2.0.15",
     "sequelize": "^6.16.1",
     "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "jest": "^28.1.2",
+    "node-mocks-http": "^1.11.0"
   }
 }
