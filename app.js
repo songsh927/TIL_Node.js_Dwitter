@@ -7,8 +7,10 @@ import cookieParser from 'cookie-parser';
 import tweetRouter from './router/tweet.js';
 import authRouter from './router/auth.js'
 import { config } from './config.js';
-import {initSocket} from './connection/socket.js';
+import {initSocket, getSocketIO} from './connection/socket.js';
 import {sequelize } from './db/database.js';
+import {TweetController} from './controller/tweet.js';
+import * as tweetRepository from './data/tweet.js'
 
 
 const app = express();
@@ -25,7 +27,7 @@ app.use(cors(corsOption));
 app.use(helmet());
 app.use(morgan('tiny'));
 
-app.use('/tweets' , tweetRouter);
+app.use('/tweets' , tweetRouter(new TweetController(tweetRepository, getSocketIO)));
 app.use('/auth', authRouter);
 
 app.use((req,res,next) => {
