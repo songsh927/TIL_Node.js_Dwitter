@@ -28,7 +28,7 @@ export class TweetController{
         const {text} = req.body;
         const tweet = await this.tweet.create(text, req.userId);
         res.status(201).json(tweet);
-        getSocketIO().emit('tweets',tweet);
+        this.getSocketIO().emit('tweets',tweet);
     };
 
     updateTweet = async (req, res, next) => {
