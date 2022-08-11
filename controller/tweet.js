@@ -36,7 +36,7 @@ export class TweetController{
         const text = req.body.text;
         const tweet = await this.tweet.getById(id);
         if(!tweet){
-            return res.sendstatus(404);
+            return res.status(404);
         }
         if(tweet.userId !== req.userId){
             return res.sendStatus(403);
